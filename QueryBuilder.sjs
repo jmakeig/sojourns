@@ -20,11 +20,23 @@ var ml = (function() {
       this.state.query = xdmp.toJSON(query).toObject();
       return this;
     }),
+    /*
+     * { property: "color", direction: "ascending|descending" }
+     */
     orderBy: wrap(function(sortSpecs) {
       var sortSpecs = [].concat.apply([], Array.prototype.slice.call(arguments));
       this.state.orderBy = sortSpecs.map(
-        function(ss) { 
-          return cts.indexOrder(cts.jsonPropertyReference(ss.property), ss.direction || "ascending"); 
+        function(ss) {
+          if(ss.score)
+            ;
+          else if(ss.property)
+            return cts.indexOrder(cts.jsonPropertyReference(ss.property), ss.direction || "ascending"); 
+          else if(ss.field)
+            throw new Error("No field yet");
+          else if(ss.path)
+            throw new Error("No path yet");
+          else
+            throw new Error("None of property, field, path");
         }
       );
       return this;
@@ -43,9 +55,15 @@ var ml = (function() {
     estimate: function() {
       return cts.estimate(this.getQuery());
     },
-    values: function* (rangeIndexes) {
-      var rangeIndexes = [].concat.apply([], Array.prototype.slice.call(arguments));
-      var itr = cts.values(rangeIndexes.map(function(ref) { return cts.jsonPropertyReference(ref); }));
+      values: function* s(rangeIndexes /* String[] for now */, options /* {order: "fragment|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/) {
+      //rangeIndexes = [].concat.apply([], Array.prototype.slice.call(arguments));
+      rangeIndexes = [].concat(rangeIndexes);
+      var itr = cts.values(
+        rangeIndexes.map(function(ref) { return cts.jsonPropertyReference(ref); }),
+        null, // start
+        null, // options
+        this.getQuery() // query
+      );
       for(var tuple of itr) {
         yield tuple;
       }
@@ -53,7 +71,7 @@ var ml = (function() {
     /*********************************************************/
     /* Get the cts.query version of the query object. Appends the collection query, if it's specified. Uses OR semantics if you specify multiples. */
     getQuery: function() {
-      var q = cts.query(this.state.query);
+      var q = (this.state.query) ? cts.query(this.state.query) : null;
       if(this.state.collections) {
         //var coll = cts.orQuery(this.state.collections.map(function(collection) { return cts.collectionQuery(collection); })); 
         q = cts.andQuery([].concat(q, cts.collectionQuery(this.state.collections)));
@@ -75,19 +93,34 @@ var ml = (function() {
   obj.where = QueryBuilder.prototype.where;
   return obj;
 })();
-    
+
+   
+   
+   
+   
+   
+   
+   
+var itr =    
 ml
-   .collection("fake data")
-   .where(
-     cts.andQuery(
-       [
-         cts.wordQuery("flannel"), 
-         cts.wordQuery("ennui")]
-     )
-   )
-  .orderBy({ property: "registered", direction: "descending" })
+   .collection("jeopardy")
+   //.where(
+   //  cts.andQuery(
+   //    [
+   //      cts.wordQuery("flannel"), 
+   //      cts.wordQuery("ennui")]
+   //  )
+   //)
+  //.orderBy({ property: "registered", direction: "descending" })
   //.toString();
   //.search().next().value;
   //.estimate();
   //.getQuery();
-  .values("eyeColor").next().value;
+  .values("value");
+  //.search().next().value;
+
+var out = [];
+for(var v of itr) {
+  out.push([v, cts.frequency(v)]);
+}
+out;

@@ -17,13 +17,13 @@ var ml = (function() {
       return this;
     }),
     where: wrap(function(query) {
-      this.state.query = xdmp.toJSON(query).toObject();
+      this.state.query = xdmp.toJSON(query).toObject(); // FIXME: This is ugly.
       return this;
     }),
     /*
      * { property: "color", direction: "ascending|descending" }
      */
-    orderBy: wrap(function(sortSpecs) {
+    orderBy: wrap(function(sortSpecs /*{property: "name", direction: "ascending|descending"}*/) {
       var sortSpecs = [].concat.apply([], Array.prototype.slice.call(arguments));
       this.state.orderBy = sortSpecs.map(
         function(ss) {
@@ -49,13 +49,13 @@ var ml = (function() {
       }
       options = [].concat(options, this.state.orderBy);
       for(var result of cts.search(this.getQuery(), options, qualityWeight, forests)) {
-        yield result.toObject();
+        yield result.toObject(); // Assumes JSON documents. TODO: What about XML? Binary?
       }
     },
     estimate: function() {
       return cts.estimate(this.getQuery());
     },
-    values: function* s(rangeIndexes /* String[] for now */, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/) {
+    values: function* (rangeIndexes /* String[] for now */, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/, qualityWeight, forests /*[]*/) {
       //rangeIndexes = [].concat.apply([], Array.prototype.slice.call(arguments));
       rangeIndexes = [].concat(rangeIndexes);
       var opts = [];
@@ -107,6 +107,9 @@ var ml = (function() {
         else return "";
       }
       return str(this.state.collections, "collections") + str(this.state.query, "query");  
+    }, 
+    toJSON: function() {
+      return this.state.toJSON()
     }
   }
   
@@ -127,13 +130,14 @@ var ml = (function() {
 var itr =    
 ml
    .collection("jeopardy")
-   //.where(
-   //  cts.andQuery(
-   //    [
+   .where(
+     cts.andQuery(
+       [
    //      cts.wordQuery("flannel"), 
-   //      cts.wordQuery("ennui")]
-   //  )
-   //)
+   //      cts.wordQuery("ennui")
+       ]
+     )
+   )
   //.orderBy({ property: "registered", direction: "descending" })
   //.toString();
   //.search().next().value;

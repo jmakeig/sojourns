@@ -42,7 +42,7 @@ var ml = (function() {
       return this;
     }),
     /*********************************************************/
-    search: function* (options /*(String||cts.indexOrder)[]*/, qualityWeight, forests) {
+    search: function* (options /*(String|cts.indexOrder)[]*/, qualityWeight, forests) {
       options = [].concat(options);
       if(options.indexOf("unfiltered") < 0 && options.indexOf("filtered") < 0) {
         options.push("unfiltered");
@@ -55,7 +55,7 @@ var ml = (function() {
     estimate: function() {
       return cts.estimate(this.getQuery());
     },
-      values: function* s(rangeIndexes /* String[] for now */, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/) {
+    values: function* s(rangeIndexes /* String[] for now */, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/) {
       //rangeIndexes = [].concat.apply([], Array.prototype.slice.call(arguments));
       rangeIndexes = [].concat(rangeIndexes);
       var opts = [];
@@ -78,14 +78,17 @@ var ml = (function() {
             break;
         }
       }
-      var itr = cts.values(
+      var itr = cts.valueTuples(
         rangeIndexes.map(function(ref) { return cts.jsonPropertyReference(ref); }),
-        null, // start
+        // null, // start: only valid for cts.values. Is this important? Should I branch based on "start: N" option?
         opts, // options
         this.getQuery() // query
       );
       for(var tuple of itr) {
-        yield tuple;
+        yield { 
+          values: JSON.parse(tuple.toString()), // FIXME: Ahhh! Kill it with fire!
+          frequency: cts.frequency(tuple)
+        }
       }
     },
     /*********************************************************/
@@ -118,7 +121,7 @@ var ml = (function() {
    
    
    
-   
+/**************************************************************************************/
    
    
 var itr =    
@@ -136,16 +139,11 @@ ml
   //.search().next().value;
   //.estimate();
   //.getQuery();
-  .values(["round"], {order: "frequency", direction: "descending"});
+  .values(["round", "value"], {order: "frequency", direction: "descending", limit: 2});
   //.search().next().value;
 
 var out = [];
 for(var v of itr) {
-  out.push([v, cts.frequency(v)]);
+  out.push(v);
 }
 out;
-
-
-
-
-

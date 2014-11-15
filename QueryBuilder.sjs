@@ -53,9 +53,8 @@ var ml = (function() {
     estimate: function() {
       return cts.estimate(this.getQuery());
     },
-    values: function* (rangeIndexes /* String[] for now */, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}*/, qualityWeight, forests /*[]*/) {
-      //rangeIndexes = [].concat.apply([], Array.prototype.slice.call(arguments));
-      rangeIndexes = [].concat(rangeIndexes);
+    values: function* (rangeIndexes /* String|String[],  */, ranges, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}, forests: ["name"], qaulityWeight: N } */) {
+      rangeIndexes = [].concat(rangeIndexes).map(function(ref) { return cts.jsonPropertyReference(ref); });
       var opts = [];
       for(var opt in options) {
         switch(opt) {
@@ -75,17 +74,33 @@ var ml = (function() {
           default:
             break;
         }
+        var qualityWeight = options["qualityWeight"];
+        //var forests = if(options["forests"]) { options["forests"].map(function(f) { if(f instanceof String) { return xdmp.forest(f); } else {return f;}}); }
       }
-      var itr = cts.valueTuples(
-        rangeIndexes.map(function(ref) { return cts.jsonPropertyReference(ref); }),
-        // null, // start: only valid for cts.values. Is this important? Should I branch based on "start: N" option?
-        opts, // options
-        this.getQuery() // query
-      );
-      for(var tuple of itr) {
+      var itr;
+      if(1 === rangeIndexes.length) {
+        if(!ranges || !Array.isArray(ranges)) {
+          // cts.values with (optional) start param
+          itr = cts.values(rangeIndexes, ranges || null, opts, this.getQuery());
+        } else if(ranges && Array.isArray(ranges)) {
+          // cts.valueRanges with required bounds
+          itr = cts.valueRanges(rangeIndexes, ranges, opts, this.getQuery());
+        }
+      } else {
+        itr = cts.valueTuples(rangeIndexes, opts, this.getQuery());
+      }
+      for(var value of itr) {
+        var v;
+        // Start UGLY work-around
+        try {
+          v = JSON.parse(value.toString()); // FIXME: Ahhh! Kill it with fire! There's something wrong with Value types.
+        } catch(e) {
+          v = value;
+        }
+        // End UGLY work-around
         yield { 
-          values: JSON.parse(tuple.toString()), // FIXME: Ahhh! Kill it with fire!
-          frequency: cts.frequency(tuple)
+          "value": v, 
+          "frequency": cts.frequency(value)
         }
       }
     },
@@ -141,11 +156,17 @@ ml
   //.search().next().value;
   //.estimate();
   //.getQuery();
-  .values(["round", "value"], {order: "frequency", direction: "descending", limit: 2});
-  //.search().next().value;
+  
+  //.values(["round", "value"], {order: "frequency", direction: "descending", limit: 2});
+  //.values("value", ["$5", "$8"])
+  //.values("value")
+  .values(["round", "value"])
 
+  //.search().next().value;
+  ;
 var out = [];
 for(var v of itr) {
-  out.push(v);
+  //out.push(JSON.parse(v.value));
+  out.push(v.value);
 }
 out;

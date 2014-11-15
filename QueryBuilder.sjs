@@ -1,9 +1,10 @@
 var ml = (function() { 
   /* Avoid new construnction without having to declare it in each function. */
-  function wrap(f) {
+  function chain(f) {
     return function() {
       var that = (this instanceof QueryBuilder) ? this : new QueryBuilder();
-      return f.apply(that, arguments); // Pass through arguments
+      f.apply(that, arguments); // Pass through arguments
+      return that;
     }
   }
   
@@ -11,19 +12,17 @@ var ml = (function() {
     this.state = {};
   }
   QueryBuilder.prototype = {
-    collection: wrap(function(uris) {
+    collection: chain(function(uris) {
       var uris = [].concat.apply([], Array.prototype.slice.call(arguments));
       this.state.collections = uris;
-      return this;
     }),
-    where: wrap(function(query) {
+    where: chain(function(query) {
       this.state.query = xdmp.toJSON(query).toObject(); // FIXME: This is ugly.
-      return this;
     }),
     /*
      * { property: "color", direction: "ascending|descending" }
      */
-    orderBy: wrap(function(sortSpecs /*{property: "name", direction: "ascending|descending"}*/) {
+    orderBy: chain(function(sortSpecs /*{property: "name", direction: "ascending|descending"}*/) {
       var sortSpecs = [].concat.apply([], Array.prototype.slice.call(arguments));
       this.state.orderBy = sortSpecs.map(
         function(ss) {
@@ -39,7 +38,6 @@ var ml = (function() {
             throw new Error("None of property, field, path");
         }
       );
-      return this;
     }),
     /*********************************************************/
     search: function* (options /*(String|cts.indexOrder)[]*/, qualityWeight, forests) {

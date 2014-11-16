@@ -171,6 +171,10 @@ QueryBuilder.prototype = {
       }
     }
   },
+  log: chain(function(logger){
+    logger = logger || xdmp.log;
+    logger(this.state);
+  }),
   /*********************************************************/
   /* Get the cts.query version of the query object. Appends the collection query, if it's specified. Uses OR semantics if you specify multiples. */
   getQuery: function() {

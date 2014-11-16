@@ -15,7 +15,7 @@ ml.collection("jeopardy")
   .page(2)
   .values(
     ["category", "value", "round"] 
-);
+  );
 ```
 
 ```json

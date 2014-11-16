@@ -1,5 +1,5 @@
 'use strict';
-var ml = require("QueryBuilder");
+var ml = require("../src/QueryBuilder");
 
 xdmp.setResponseContentType("application/json");
 var limit = 2500; //parseInt(xdmp.getRequestField("limit", 100), 10);

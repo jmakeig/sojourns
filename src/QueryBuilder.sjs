@@ -172,6 +172,7 @@ QueryBuilder.prototype = {
       }
     }
   },
+  /* Passes the current state to a function. Defaults to xdmp.log(). */
   log: chain(function(logger){
     logger = logger || xdmp.log;
     logger(this.state);

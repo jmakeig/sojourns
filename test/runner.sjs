@@ -19,4 +19,9 @@ suite.forEach(function(path) {
     results.push(result);
   }
 });
-results;
+results
+  // Report only failing tests
+  .filter(function(item){
+    return !item.pass
+  })
+;

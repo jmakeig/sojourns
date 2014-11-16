@@ -4,20 +4,19 @@ var suite = [
   "test-search.sjs"
 ]
 
-suite.map(function(path) {
-  var test = require(path);
-  var results = {path: path, tests: []};
-  
-  for(var t in test) {
-    var result = {test: t};
+var results = [];
+suite.forEach(function(path) {
+  var suite = require(path);
+  for(var test in suite) {
+    var result = {path: path, test: test};
     try {
-      test[t]();
+      suite[test]();
       result.pass = true;
     } catch(e) {
       result.pass = false;
       result.message = e.message;
     }
-    results.tests.push(result);
+    results.push(result);
   }
-  return results;
 });
+results;

@@ -92,6 +92,7 @@ QueryBuilder.prototype = {
     if(options.indexOf("unfiltered") < 0 && options.indexOf("filtered") < 0) {
       options.push("unfiltered");
     }
+    // FIXME: pushing undefined actually adds an entry
     options.push(this.getScoring());
     if(this.state.orderBy && this.state.orderBy.order) {
       options = [].concat(options, this.state.orderBy.order);

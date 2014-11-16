@@ -8,7 +8,7 @@ var ml = require("../src/QueryBuilder.sjs");
 module.exports = {
   estimate: function() {
     // assert.isType(Array.from, Function);
-    assert.equals(ml.collection("jeopardy").estimate(), 216930);
+    assert.equals(ml.collection("jeopardy").estimate(), 2500);
     //assert.equals(Array.from(ml.collection("jeopardy").search()).length, 216930);
   },
   another: function() {

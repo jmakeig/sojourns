@@ -163,7 +163,7 @@ QueryBuilder.prototype = {
       try {
         v = JSON.parse(value.toString()); // FIXME: Ahhh! Kill it with fire! There's something wrong with Value types.
       } catch(e) {
-        v = value;
+        v = value.valueOf(); // This returns a Value instance, not a primitive, thus === comparisons won't work. Is this the right thing to do?
       }
       // End UGLY work-around
       yield { 

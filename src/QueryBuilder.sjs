@@ -58,6 +58,7 @@ QueryBuilder.prototype = {
       }
     );
   }),
+  // TODO: "page" isn't a very good name. What is the concept captured here?
   page: chain(function(limit, offset) {
     this.state.page = { limit: limit, offset: offset };
   }),
@@ -68,7 +69,11 @@ QueryBuilder.prototype = {
       options.push("unfiltered");
     }
     options = [].concat(options, this.state.orderBy);
-    for(var result of cts.search(this.getQuery(), options, qualityWeight, forests)) {
+    var itr = cts.search(this.getQuery(), options, qualityWeight, forests);
+    if(this.state.page && (this.state.page.limit || this.state.page.offset)) {
+      itr = fn.subsequence(itr, this.state.page.offset || 1, this.state.page.limit);
+    }
+    for(var result of itr) {
       yield result.toObject(); // Assumes JSON documents. TODO: What about XML? Binary?
     }
   },

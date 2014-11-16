@@ -4,6 +4,8 @@
 
 require("util.sjs");
 
+xdmp.setResponseContentType("application/json");
+
 var suite = [
   "test-search.sjs",
   "test-values.sjs"
@@ -42,25 +44,6 @@ function setUp() {
     return shows;
   }
 }
-/*
-var admin = require("/MarkLogic/admin");
-var config = admin.getConfiguration();
-try {
-  config = admin.databaseAddRangeElementIndex(config, xdmp.database(), 
-    admin.databaseRangeElementIndex("dateTime", null, "registered", null, true, "ignore")
-  );
-} catch(err) { 
-  if(err.name != "ADMIN-DUPLICATECONFIGITEM") { throw err; } // Ignore the error if we've already got this index
-}
-try {
-  config = admin.databaseAddRangePathIndex(config, xdmp.database(), 
-    admin.databaseRangePathIndex(xdmp.database(), "double", "balance/value", null, false, "ignore")
-  );
-} catch(err) { 
-  if(err.name != "ADMIN-DUPLICATECONFIGITEM") { throw err; } 
-}
-admin.saveConfiguration(config);
-*/
 
 function run() {
   var results = [];

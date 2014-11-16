@@ -77,17 +77,18 @@ function run() {
       results.push(result);
     }
   });
-  return results
-    // Report only failing tests
-    .filter(function(item){
-      return DEBUG || !item.pass
-    })
-  ;
+  return [ // FIXME: See below
+    results
+      // Report only failing tests
+      .filter(function(item){
+        return !item["pass"];
+      })
+  ];
 }
 
 function tearDown() {}
 
 xdmp.log(tx(setUp, "Documents"));
-var output = Array.from(tx(run, "Documents"));
+var output = Array.from(tx(run, "Documents"))[0]; // FIXME: There's something odd going on with the .filter() above. Need to double wrap arrays and then unwrap.
 xdmp.log(tx(tearDown, "Documents"));
 output;

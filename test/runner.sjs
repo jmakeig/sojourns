@@ -1,5 +1,7 @@
 'use strict';
 
+// clear; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs | json
+
 require("util.sjs");
 
 var suite = [

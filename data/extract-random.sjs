@@ -15,3 +15,6 @@ for(var doc of itr) {
   out.push(doc);
 }
 out;
+
+// clear; curl -fsS --digest --user admin:'********' http://localhost:8765/data/extract-random.sjs | json > ../data/jeopardy.json
+// cat jeopardy.json | jq '. | length'

@@ -38,3 +38,43 @@ ml.collection("jeopardy")
   }
 ]
 ```
+
+### Buckets
+
+```javascript
+ml.collection("jeopardy")
+  .values(
+    "value",
+    ["$3", "$6"] 
+  );
+```
+
+```json
+[
+  {
+    "value": {
+      "minimum": "$1,000",
+      "maximum": "$2547",
+      "upper-bound": "$3"
+    },
+    "frequency": 98737
+  },
+  {
+    "value": {
+      "minimum": "$3,000",
+      "maximum": "$585",
+      "lower-bound": "$3",
+      "upper-bound": "$6"
+    },
+    "frequency": 61772
+  },
+  {
+    "value": {
+      "minimum": "$6,000",
+      "maximum": "$900",
+      "lower-bound": "$6"
+    },
+    "frequency": 52787
+  }
+]
+```

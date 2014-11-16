@@ -25,7 +25,14 @@ function chain(f) {
 }
 
 function QueryBuilder() {
-  this.state = {};
+  this.state = {
+/*
+    collections: undefined,
+    query: undefined,
+    orderBy: {},
+    page: undefined
+*/
+  };
 }
 QueryBuilder.prototype = {
   collection: chain(function(uris) {
@@ -41,22 +48,37 @@ QueryBuilder.prototype = {
   /*
    * { property: "color", direction: "ascending|descending" }
    */
-  orderBy: chain(function(sortSpecs /*{property: "name", direction: "ascending|descending"}*/) {
-    var sortSpecs = [].concat.apply([], Array.prototype.slice.call(arguments));
-    this.state.orderBy = sortSpecs.map(
-      function(ss) {
-        if(ss.score)
-          ;
-        else if(ss.property)
-          return cts.indexOrder(cts.jsonPropertyReference(ss.property), ss.direction || "ascending"); 
-        else if(ss.field)
-          throw new Error("No field yet");
-        else if(ss.path)
-          throw new Error("No path yet");
-        else
-          throw new Error("None of property, field, path");
-      }
-    );
+  orderBy: chain(function(sortSpecs /*{property: "name", direction: "ascending|descending"}*/, scoring /* "logtfidf|logtf|simple|random|zero*/) {    
+    this.state.orderBy = {};
+    
+    if(1 === arguments.length && "random" === arguments[0]) {
+      this.state.orderBy.scoring = "random";
+    } else {
+      if(scoring) this.state.orderBy.scoring = scoring;
+    
+      var sortSpecs = [].concat.apply([], Array.prototype.slice.call(arguments));
+      //     cts.indexOrder
+      //     cts.scoreOrder -> align with score-random
+      //     cts.confidenceOrder
+      //     cts.fitnessOrder
+      //     cts.qualityOrder
+      //     cts.documentOrder
+      //     cts.unordered
+      this.state.orderBy.order = sortSpecs.map(
+        function(ss) {
+           if(ss.score)
+             return cts.scoreOrder(ss.direction || "descending");
+           else if(ss.property)
+             return cts.indexOrder(cts.jsonPropertyReference(ss.property), ss.direction || "ascending"); 
+           else if(ss.field)
+             throw new Error("No field yet");
+           else if(ss.path)
+             throw new Error("No path yet");
+           else
+             throw new Error("None of property, field, path");
+          }
+      );
+    }
   }),
   // TODO: "page" isn't a very good name. What is the concept captured here?
   page: chain(function(limit, offset) {
@@ -65,10 +87,15 @@ QueryBuilder.prototype = {
   /*********************************************************/
   search: function* (options /*(String|cts.indexOrder)[]*/, qualityWeight, forests) {
     options = [].concat(options);
+    
+    // TODO: Change options to an object and implement proper defaults, like .values()
     if(options.indexOf("unfiltered") < 0 && options.indexOf("filtered") < 0) {
       options.push("unfiltered");
     }
-    options = [].concat(options, this.state.orderBy);
+    options.push(this.getScoring());
+    if(this.state.orderBy && this.state.orderBy.order) {
+      options = [].concat(options, this.state.orderBy.order);
+    }
     var itr = cts.search(this.getQuery(), options, qualityWeight, forests);
     if(this.state.page && (this.state.page.limit || this.state.page.offset)) {
       itr = fn.subsequence(itr, this.state.page.offset || 1, this.state.page.limit);
@@ -85,7 +112,7 @@ QueryBuilder.prototype = {
     options = options || {};
     // TODO: Move this into config
     var defaults = { 
-      order: "frequency", 
+      order: "frequency",
       direction: "descending", 
       limit: (this.state.page && this.state.page.limit) ? this.state.page.limit : 10
     };
@@ -115,6 +142,7 @@ QueryBuilder.prototype = {
       }
       var qualityWeight = options["qualityWeight"];
       //var forests = if(options["forests"]) { options["forests"].map(function(f) { if(f instanceof String) { return xdmp.forest(f); } else {return f;}}); }
+      opts.push(this.getScoring());
     }
     var itr;
     if(1 === rangeIndexes.length) {
@@ -152,6 +180,12 @@ QueryBuilder.prototype = {
       q = cts.andQuery([].concat(q, cts.collectionQuery(this.state.collections)));
     }
     return q;
+  },
+  getScoring: function() {
+    if(this.state.orderBy && this.state.orderBy.scoring)
+      return "score-" + this.state.orderBy.scoring;
+    else 
+      return undefined;
   },
   toString: function() {
     function str(obj, name) {

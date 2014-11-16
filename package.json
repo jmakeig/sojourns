@@ -1,0 +1,25 @@
+{
+  "name": "sojourns",
+  "version": "0.9.0",
+  "description": "A MarkLogic Server-Side JavaScript search API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmakeig/sojourns.git"
+  },
+  "keywords": [
+    "MarkLogic"
+  ],
+  "author": "Justin Makeig <jmakeig@marklogic.com>",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/jmakeig/sojourns/issues"
+  },
+  "homepage": "https://github.com/jmakeig/sojourns",
+  "devDependencies": {
+    "gulp": "^3.8.10"
+  }
+}

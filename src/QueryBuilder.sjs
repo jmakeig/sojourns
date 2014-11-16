@@ -106,7 +106,7 @@ QueryBuilder.prototype = {
     }
   },
   estimate: function() {
-    return cts.estimate(this.getQuery());
+    return cts.estimate(this.getQuery()).valueOf();
   },
   values: function* (rangeIndexes /* String|String[],  */, ranges, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}, forests: ["name"], qaulityWeight: N } */) {
     rangeIndexes = [].concat(rangeIndexes).map(function(ref) { return cts.jsonPropertyReference(ref); });

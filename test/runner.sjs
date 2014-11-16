@@ -1,13 +1,18 @@
 'use strict';
 
 var suite = [
-  require("test-search.sjs")
+  "test-search.sjs"
 ]
 
-suite.map(function(test) {
+suite.map(function(path) {
+  var test = require(path);
+  var result = {path: path};
   try {
-    test.test();
+    test();
+    result.pass = true;
   } catch(e) {
-    return e.message;
+    result.pass = false;
+    result.message = e.message;
   }
+  return result;
 });

@@ -166,7 +166,7 @@ QueryBuilder.prototype = {
       }
       // End UGLY work-around
       yield { 
-        "value": v, 
+        "item": v, 
         "frequency": cts.frequency(value)
       }
     }

@@ -5,7 +5,8 @@
 require("util.sjs");
 
 var suite = [
-  "test-search.sjs"
+  "test-search.sjs",
+  "test-values.sjs"
 ]
 
 var DEBUG = false;

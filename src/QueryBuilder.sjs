@@ -58,6 +58,9 @@ QueryBuilder.prototype = {
       }
     );
   }),
+  page: chain(function(limit, offset) {
+    this.state.page = { limit: limit, offset: offset };
+  }),
   /*********************************************************/
   search: function* (options /*(String|cts.indexOrder)[]*/, qualityWeight, forests) {
     options = [].concat(options);
@@ -76,7 +79,11 @@ QueryBuilder.prototype = {
     rangeIndexes = [].concat(rangeIndexes).map(function(ref) { return cts.jsonPropertyReference(ref); });
     options = options || {};
     // TODO: Move this into config
-    var defaults = { order: "frequency", direction: "descending", limit: 10};
+    var defaults = { 
+      order: "frequency", 
+      direction: "descending", 
+      limit: (this.state.page && this.state.page.limit) ? this.state.page.limit : 10
+    };
     for(var d in defaults) {
       if(!options[d]) { 
         options[d] = defaults[d]; 

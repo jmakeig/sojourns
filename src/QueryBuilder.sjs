@@ -74,6 +74,14 @@ QueryBuilder.prototype = {
   },
   values: function* (rangeIndexes /* String|String[],  */, ranges, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}, forests: ["name"], qaulityWeight: N } */) {
     rangeIndexes = [].concat(rangeIndexes).map(function(ref) { return cts.jsonPropertyReference(ref); });
+    options = options || {};
+    // TODO: Move this into config
+    var defaults = { order: "frequency", direction: "descending", limit: 10};
+    for(var d in defaults) {
+      if(!options[d]) { 
+        options[d] = defaults[d]; 
+      }
+    }
     var opts = [];
     for(var opt in options) {
       switch(opt) {

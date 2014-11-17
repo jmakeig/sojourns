@@ -115,7 +115,6 @@ QueryBuilder.prototype = {
     var defaults = { 
       order: "frequency",
       direction: "descending", 
-      empties: true
     };
     if(this.state.page && this.state.page.limit) defaults.limit = this.state.page.limit;
     for(var d in defaults) {
@@ -158,6 +157,8 @@ QueryBuilder.prototype = {
         // cts.values with (optional) start param
         itr = cts.values(rangeIndexes, ranges || null, opts, this.getQuery());
       } else if(ranges && Array.isArray(ranges)) {
+        // "empties" param only applies to ranges in cts.valueRanges
+        if(!("empties" in options)) opts.push("empties");
         // cts.valueRanges with required bounds
         itr = cts.valueRanges(rangeIndexes, ranges, opts, this.getQuery());
       }

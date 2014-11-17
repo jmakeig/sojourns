@@ -1,6 +1,7 @@
 'use strict';
 
-// clear; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs | json
+// Usage:
+// clear; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs | jq .
 
 require("util.sjs");
 

@@ -15,6 +15,9 @@
  */
 'use strict';
 
+// FIXME: When invoked the paths are getting fudged up
+//require("../src/util");
+
 /* Avoid new construnction without having to declare it in each function. */
 function chain(f) {
   return function() {

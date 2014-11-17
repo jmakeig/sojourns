@@ -1,6 +1,6 @@
 'use strict';
 
-require("util.sjs");
+require("../src/util");
 
 module.exports = {
   AssertionError: AssertionError,

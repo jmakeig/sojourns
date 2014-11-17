@@ -3,7 +3,7 @@
 // Usage:
 // clear; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs | jq .
 
-require("util.sjs");
+require("../src/util");
 
 xdmp.setResponseContentType("application/json");
 

@@ -56,8 +56,9 @@ function run() {
         suite[test]();
         result.pass = true;
       } catch(e) {
+        xdmp.log(e);
         result.pass = false;
-        result.message = e.message;
+        result.error = e;
       }
       results.push(result);
     }

@@ -115,9 +115,9 @@ QueryBuilder.prototype = {
     var defaults = { 
       order: "frequency",
       direction: "descending", 
-      limit: (this.state.page && this.state.page.limit) ? this.state.page.limit : 10,
       //map: true // TODO: Figure out what "map" does. Will this give an eager object, rather than an iterator?
     };
+    if(this.state.page && this.state.page.limit) defaults.limit = this.state.page.limit;
     for(var d in defaults) {
       if(!options[d]) { 
         options[d] = defaults[d]; 

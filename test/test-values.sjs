@@ -10,10 +10,10 @@ module.exports = {
     assert.equals(facet.frequency, 8);
   },
   allCategories: function() {
-    // XQuery: count(cts:values(cts:json-property-reference("category"), (:start:)(), (:options:)()))
     assert.equals(
       Array.from(ml.where().values("category")).length,
-      Array.from(cts.values(cts.jsonPropertyReference("category"))).length
+      Array.from(cts.values(cts.jsonPropertyReference("category"))).length,
+      xdmp.xqueryEval('count(cts:values(cts:json-property-reference("category")))').next().value.valueOf()
     );
   }
 }

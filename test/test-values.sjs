@@ -11,8 +11,8 @@ module.exports = {
   },
   allCategories: function() {
     assert.equals(
-      Array.from(ml.where().values("category")).length,
-      Array.from(cts.values(cts.jsonPropertyReference("category"))).length,
+      Array.from(      ml.where().values("category")).length,
+      Array.from(      cts.values(cts.jsonPropertyReference("category"))).length,
       xdmp.xqueryEval('count(cts:values(cts:json-property-reference("category")))').next().value.valueOf()
     );
   }

@@ -115,7 +115,7 @@ QueryBuilder.prototype = {
     var defaults = { 
       order: "frequency",
       direction: "descending", 
-      //map: true // TODO: Figure out what "map" does. Will this give an eager object, rather than an iterator?
+      empties: true
     };
     if(this.state.page && this.state.page.limit) defaults.limit = this.state.page.limit;
     for(var d in defaults) {
@@ -131,7 +131,6 @@ QueryBuilder.prototype = {
           opts.push(options[opt] + "-" + opt);
           break;
         case "direction":
-        //case "map":
           opts.push(options[opt]);
           break;
         case "limit":
@@ -139,6 +138,12 @@ QueryBuilder.prototype = {
         case "sample":
         case "truncate":
           opts.push(opt + "=" + options[opt]);
+          break;
+        case "empties":
+          opts.push(opt);
+          break;
+        case "map":
+          // Eat this param because it's just formatting. (TODO: Or is it?)
           break;
         default:
           break;
@@ -170,6 +175,16 @@ QueryBuilder.prototype = {
       // End UGLY work-around
       yield { 
         "item": v, 
+        // cts.valueRanges (min and max only if there are value, l- u-bound with empties too)
+        // {
+        //   "item": {
+        //     "minimum": "1984-12-06", // xs.date index
+        //     "maximum": "1984-12-07",
+        //     "lower-bound": "1984-12-01",
+        //     "upper-bound": "1985-01-01"
+        //   },
+        //   "frequency": 3
+        // }
         "frequency": cts.frequency(value)
       }
     }

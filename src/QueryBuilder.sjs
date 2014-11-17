@@ -115,7 +115,8 @@ QueryBuilder.prototype = {
     var defaults = { 
       order: "frequency",
       direction: "descending", 
-      limit: (this.state.page && this.state.page.limit) ? this.state.page.limit : 10
+      limit: (this.state.page && this.state.page.limit) ? this.state.page.limit : 10,
+      //map: true // TODO: Figure out what "map" does. Will this give an eager object, rather than an iterator?
     };
     for(var d in defaults) {
       if(!options[d]) { 
@@ -130,6 +131,7 @@ QueryBuilder.prototype = {
           opts.push(options[opt] + "-" + opt);
           break;
         case "direction":
+        //case "map":
           opts.push(options[opt]);
           break;
         case "limit":
@@ -207,5 +209,5 @@ QueryBuilder.prototype = {
 
 module.exports = {
   collection: QueryBuilder.prototype.collection,
-  where: QueryBuilder.prototype.where
+  where: QueryBuilder.prototype.where,
 }

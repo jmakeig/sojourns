@@ -78,8 +78,7 @@ function run() {
 
 function tearDown() {}
 
-//xdmp.log(tx(setUp, "Documents"));
+xdmp.log(tx(setUp, "Documents"));
 var output = Array.from(tx(run, "Documents"))[0]; // FIXME: There's something odd going on with the .filter() above. Need to double wrap arrays and then unwrap.
-//var output = Array.from(run());
-//xdmp.log(tx(tearDown, "Documents"));
+xdmp.log(tx(tearDown, "Documents"));
 output;

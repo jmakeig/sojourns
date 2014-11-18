@@ -3,7 +3,7 @@
 var assert = require("assert.sjs");
 var ml = require("../src/QueryBuilder.sjs");
 
-
+//xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
 
 module.exports = {
   estimate: function() {

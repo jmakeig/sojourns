@@ -15,8 +15,13 @@
  */
 'use strict';
 
+//xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
+
 // FIXME: When invoked the paths are getting fudged up
-//require("../src/util");
+require("/src/util");
+var buckets = require("/src/buckets");
+
+xdmp.log(buckets);
 
 /* Avoid new construnction without having to declare it in each function. */
 function chain(f) {

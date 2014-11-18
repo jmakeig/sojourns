@@ -7,6 +7,8 @@ require("../src/util");
 
 xdmp.setResponseContentType("application/json");
 
+//xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
+
 var suite = [
   "test-search.sjs",
   "test-values.sjs"
@@ -15,13 +17,15 @@ var suite = [
 var DEBUG = false;
 
 // Run a function in a different transaction against a specific database.
-function tx(f, database) {
+function tx(f, database, modules, root) {
   return xdmp.invokeFunction(
     f, 
     { 
       "database": xdmp.database(database), 
       "transactionMode": "update-auto-commit", 
-      "isolation": "different-transaction" 
+      "isolation": "different-transaction" //, 
+      //"modules": modules,
+      //"root": root,
     }
   );
 }
@@ -74,7 +78,8 @@ function run() {
 
 function tearDown() {}
 
-xdmp.log(tx(setUp, "Documents"));
+//xdmp.log(tx(setUp, "Documents"));
 var output = Array.from(tx(run, "Documents"))[0]; // FIXME: There's something odd going on with the .filter() above. Need to double wrap arrays and then unwrap.
-xdmp.log(tx(tearDown, "Documents"));
+//var output = Array.from(run());
+//xdmp.log(tx(tearDown, "Documents"));
 output;

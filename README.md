@@ -89,7 +89,7 @@ ml.where()
   .page(20)
   .values("air_date", function(min, max) {
     return ml.buckets.byMonth(min, max, 1);
-  }, {order: "item", direction: “descending"})
+  }, {order: "item", direction: "descending"})
 ).map(
   function(facet) {
     return 

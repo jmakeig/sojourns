@@ -41,6 +41,8 @@ ml.collection("jeopardy")
 
 ### Buckets
 
+#### Static
+
 ```javascript
 ml.collection("jeopardy")
   .values(
@@ -75,6 +77,57 @@ ml.collection("jeopardy")
       "lower-bound": "$6"
     },
     "frequency": 52787
+  }
+]
+```
+#### Calculated
+```javascript
+var ml = require("src/QueryBuilder");
+Array.from(
+ml.where()
+  .values("air_date", 
+    // Callback gets the min and max values in order to calculate ranges
+    function(min, max) {
+      return ml.buckets.byWeek(min, max);
+    }, 
+    {order: "item", direction: "ascending"}
+  )
+);
+```
+
+```json
+[
+  {
+    "item": {
+      "minimum": "1984-09-14",
+      "maximum": "1984-09-14",
+      "lower-bound": "1984-09-14",
+      "upper-bound": "1984-09-21"
+    },
+    "frequency": 3
+  },
+  {
+    "item": {
+      "minimum": "1984-09-27",
+      "maximum": "1984-09-27",
+      "lower-bound": "1984-09-21",
+      "upper-bound": "1984-09-28"
+    },
+    "frequency": 2
+  },
+  {
+    "item": {
+      "lower-bound": "1984-09-28",
+      "upper-bound": "1984-10-05"
+    },
+    "frequency": 0
+  },
+  {
+    "item": {
+      "lower-bound": "1984-10-05",
+      "upper-bound": "1984-10-12"
+    },
+    "frequency": 0
   }
 ]
 ```

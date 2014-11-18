@@ -21,8 +21,6 @@
 require("/src/util");
 var buckets = require("/src/buckets");
 
-xdmp.log(buckets);
-
 /* Avoid new construnction without having to declare it in each function. */
 function chain(f) {
   return function() {
@@ -161,13 +159,19 @@ QueryBuilder.prototype = {
     }
     var itr;
     if(1 === rangeIndexes.length) {
-      if(!ranges || !Array.isArray(ranges)) {
+      if(!ranges || (!Array.isArray(ranges) && !(ranges instanceof Function))) {
         // cts.values with (optional) start param
         itr = cts.values(rangeIndexes, ranges || null, opts, this.getQuery());
-      } else if(ranges && Array.isArray(ranges)) {
+      } else if(ranges && (Array.isArray(ranges) || (ranges instanceof Function))) {
         // "empties" param only applies to ranges in cts.valueRanges
         if(!("empties" in options)) opts.push("empties");
         // cts.valueRanges with required bounds
+        if(ranges instanceof Function) {
+          ranges = ranges.call(this, 
+            cts.min(rangeIndexes[0], null, this.getQuery()).toObject(), 
+            cts.max(rangeIndexes[0], null, this.getQuery()).toObject()
+          ).map(function(dt) { return xs.date(dt); });
+        }
         itr = cts.valueRanges(rangeIndexes, ranges, opts, this.getQuery());
       }
     } else {
@@ -234,4 +238,5 @@ QueryBuilder.prototype = {
 module.exports = {
   collection: QueryBuilder.prototype.collection,
   where: QueryBuilder.prototype.where,
+  buckets: buckets
 }

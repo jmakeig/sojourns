@@ -33,6 +33,7 @@ function weekBuckets(start, end, dayStart /* 0-6 */) {
   start = moment(start);
   end = moment(end);
   dayStart = (dayStart > 6 || dayStart < 0) ? Math.abs(dayStart % 7) : dayStart; // Keep bounds 0-6
+  dayStart = dayStart || start.day();
   dayStart = (start.day() < dayStart) ? dayStart - 7 : dayStart; // Make sure to expand to the left
   
   var range = moment().range(

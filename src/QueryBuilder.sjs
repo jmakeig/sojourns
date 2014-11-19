@@ -168,6 +168,7 @@ QueryBuilder.prototype = {
         // cts.valueRanges with required bounds
         if(ranges instanceof Function) {
           ranges = ranges.call(this, 
+            // https://github.com/lodash/lodash/blob/2.4.1/dist/lodash.compat.js#L3074
             cts.min(rangeIndexes[0], null, this.getQuery()).toObject(), 
             cts.max(rangeIndexes[0], null, this.getQuery()).toObject()
           ).map(function(dt) { return xs.date(dt); });

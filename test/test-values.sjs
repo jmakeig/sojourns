@@ -20,5 +20,7 @@ module.exports = {
     assert.equals(2500, Array.from(ml.where().values(cts.uriReference())).length);
     assert.equals(1, Array.from(ml.where().values(cts.collectionReference())).length);
     assert.equals("jeopardy", ml.where().values(cts.collectionReference()).next().value.item.valueOf());
+  justPaginated: function() {
+    assert.equals(2500, Array.from(ml.page().values(cts.uriReference())).length);
   }
 }

@@ -23,5 +23,10 @@ module.exports = {
       xdmp.xqueryEval('subsequence(cts:search(collection(), cts:and-query(("america")), ("unfiltered", cts:index-order(cts:json-property-reference("show_number"), "ascending"))), 0, 1)/answer').next().value.valueOf(),
       "'Found only in Latin America, they are the largest parrots'"
     );
+  },
+  justPaginated: function() {
+    assert.equals(2500, Array.from(ml.page().search()).length);
+    assert.equals(50, Array.from(ml.page(50).search()).length);
+    assert.equals(10, Array.from(ml.page(10, 100).search()).length);
   }
 }

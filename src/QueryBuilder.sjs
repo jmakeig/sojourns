@@ -38,6 +38,7 @@ function QueryBuilder() {
     orderBy: {},
     page: undefined
 */
+    query: xdmp.toJSON(cts.andQuery([])).toObject()
   };
 }
 QueryBuilder.prototype = {
@@ -251,5 +252,6 @@ function isLexicon(ref) {
 module.exports = {
   collection: QueryBuilder.prototype.collection,
   where: QueryBuilder.prototype.where,
+  page: QueryBuilder.prototype.page,
   buckets: buckets
 }

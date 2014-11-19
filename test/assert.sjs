@@ -20,7 +20,7 @@ function assertEquals(a, b) {
   var args = Array.prototype.slice.call(arguments, 0);
   if(args.length <= 1) return;
   for(var i = 1; i < args.length; i++) {
-    xdmp.log(args[i] +", "+ args[i-1]);
+    //xdmp.log(args[i] +", "+ args[i-1]);
     assert(args[i] === args[i-1], args[i] + " should equal " + args[i-1]);
   }
 }

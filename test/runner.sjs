@@ -60,9 +60,16 @@ function run() {
         suite[test]();
         result.pass = true;
       } catch(e) {
-        xdmp.log(e);
         result.pass = false;
-        result.error = e;
+        // FIXME: I can't just pass the error here or enumerate over its properties
+        result.error = {
+          name: e.name, 
+          message: e.message, 
+          stack: e.stack.split(/\n/), 
+          code: e.code, 
+          retryable: e.retryable
+        }
+        //throw e;
       }
       results.push(result);
     }

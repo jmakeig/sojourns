@@ -19,7 +19,8 @@ module.exports = {
   specialLexicons: function() {
     assert.equals(2500, Array.from(ml.where().values(cts.uriReference())).length);
     assert.equals(1, Array.from(ml.where().values(cts.collectionReference())).length);
-    assert.equals("jeopardy", ml.where().values(cts.collectionReference()).next().value.item.valueOf());
+    assert.equals("jeopardy", ml.where().values(cts.collectionReference()).next().value.item);
+  },
   justPaginated: function() {
     assert.equals(2500, Array.from(ml.page().values(cts.uriReference())).length);
   }

@@ -115,7 +115,16 @@ QueryBuilder.prototype = {
     return cts.estimate(this.getQuery()).valueOf();
   },
   values: function* (rangeIndexes /* String|String[],  */, ranges, options /* {order: "frequency|item", frequency: "fragment|item", direction: "ascending|descending", limit: N, skip: N, sample: N, truncate: N, score: "logtfidf|logtf|simple|random|zero"}, forests: ["name"], qaulityWeight: N } */) {
-    rangeIndexes = [].concat(rangeIndexes).map(function(ref) { return cts.jsonPropertyReference(ref); });
+    rangeIndexes = [].concat(rangeIndexes).map(
+      function(ref) { 
+        if(typeof ref === "string") {
+          return cts.jsonPropertyReference(ref); 
+        } else if(isLexicon(ref)) {
+          return ref;
+        }
+        //throw new Error(ref + " is not a lexicon");
+      }
+    );
     options = options || {};
     // TODO: Move this into config
     var defaults = { 
@@ -236,6 +245,9 @@ QueryBuilder.prototype = {
   }
 }
 
+function isLexicon(ref) {
+  return (ref instanceof Value) && ["cts.uriReference()", "cts.collectionReference([])"].indexOf(ref.toString()) >= 0;
+}
 module.exports = {
   collection: QueryBuilder.prototype.collection,
   where: QueryBuilder.prototype.where,

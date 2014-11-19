@@ -15,5 +15,10 @@ module.exports = {
       Array.from(      cts.values(cts.jsonPropertyReference("category"))).length,
       xdmp.xqueryEval('count(cts:values(cts:json-property-reference("category")))').next().value.valueOf()
     );
+  },
+  specialLexicons: function() {
+    assert.equals(2500, Array.from(ml.where().values(cts.uriReference())).length);
+    assert.equals(1, Array.from(ml.where().values(cts.collectionReference())).length);
+    assert.equals("jeopardy", ml.where().values(cts.collectionReference()).next().value.item.valueOf());
   }
 }

@@ -15,11 +15,14 @@
  */
 'use strict';
 
-//xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
+xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
+
 
 // FIXME: When invoked the paths are getting fudged up
-require("/src/util");
-var buckets = require("/src/buckets");
+require("/src/util.sjs");                  // FIXME: This breaks portability. Change me.
+var buckets = require("/src/buckets.sjs"); // FIXME: This breaks portability. Change me.
+
+
 
 /* Avoid new construnction without having to declare it in each function. */
 function chain(f) {
@@ -249,6 +252,13 @@ QueryBuilder.prototype = {
 function isLexicon(ref) {
   return (ref instanceof Value) && ["cts.uriReference()", "cts.collectionReference([])"].indexOf(ref.toString()) >= 0;
 }
+function getForests(dbName) {
+  var forests = xdmp.databaseForests((dbName) ? xdmp.database(dbName) : xdmp.database()).toArray();
+  return forests.map(function(f) {
+    return { name: xdmp.forestName(f), host: xdmp.hostName(xdmp.forestHost(f)) };
+  });
+}
+
 module.exports = {
   collection: QueryBuilder.prototype.collection,
   where: QueryBuilder.prototype.where,

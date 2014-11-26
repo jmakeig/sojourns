@@ -4,7 +4,7 @@
   "description": "A MarkLogic Server-Side JavaScript search API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo 'Assumes you have an app server on 8765'; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs; echo ''"
   },
   "repository": {
     "type": "git",

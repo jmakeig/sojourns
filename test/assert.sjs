@@ -21,6 +21,7 @@ module.exports = {
   AssertionError: AssertionError,
   equals: assertEquals,
   valueEquals: assertValueEquals,
+  arraysEqual: asertArraysEqual,
   notNull: assertNotNull,
   isType: assertIsType
 }
@@ -37,6 +38,15 @@ function assertEquals(a, b) {
   for(var i = 1; i < args.length; i++) {
     //xdmp.log(args[i] +", "+ args[i-1]);
     assert(args[i] === args[i-1], args[i] + " should equal " + args[i-1]);
+  }
+}
+
+function asertArraysEqual(a, b) {
+  var arrays = Array.prototype.slice.call(arguments, 0);
+  assertEquals.apply(this, arrays.map(function(a) { return a.length; }));
+  
+  for(var i = 0; i < arrays[0].length; i++) {
+    assertEquals.apply(this, arrays.map(function(a) { return a[i]; }));
   }
 }
 

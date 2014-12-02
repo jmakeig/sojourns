@@ -38,5 +38,47 @@ module.exports = {
   },
   justPaginated: function() {
     assert.equals(2500, Array.from(ml.page().values(cts.uriReference())).length);
+  },
+  bucketsDate: function() {
+    var values = Array.from(ml.collection("jeopardy").values('value', ['$3', '$6']));
+    var xquery = [
+      "for $range in", 
+      "  cts:value-ranges(", 
+      "    cts:json-property-reference('value'),", 
+      "    ('$3', '$6')", 
+      "  )", 
+      "return cts:frequency($range)" 
+    ].join('\n');
+    var xqResult = xdmp.xqueryEval(xquery).toArray();
+    
+    assert.equals(values[0].frequency, xqResult[0], 1132);
+    assert.equals(values[1].frequency, xqResult[1], 687);
+    assert.equals(values[2].frequency, xqResult[2], 640);
+  },
+  bucketCallBackInt: function() {
+    var values = Array.from(
+    ml.collection('jeopardy')
+      .values('show_number', function(min, max) {
+        assert.equals(5, min);
+        assert.equals(6296, max);
+        var buckets = [];
+        for(var i = 0; i < 63; i++) {
+          buckets.push((i + 1) * 100);
+        }
+        return buckets;
+      })
+    );
+    
+    var xquery = [
+      'let $sn  as cts:reference  := cts:json-property-reference("show_number", ("type=int"))', 
+      'let $min as xs:int         := cts:min($sn) (: 5 :)', 
+      'let $max as xs:int         := cts:max($sn) (: 6296 :)', 
+      'let $buckets as xs:int+    := for $i in (1 to 63) return $i * 100', 
+      'let $options as xs:string* := ("empties", "descending", "frequency-order")', 
+      'return cts:frequency(cts:value-ranges($sn, $buckets , $options))', 
+    ].join('\n');
+    var xqResult = xdmp.xqueryEval(xquery).toArray();
+    
+    assert.arraysEqual(xqResult, values.map(function(v) { return v.frequency; }));
   }
 }

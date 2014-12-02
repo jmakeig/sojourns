@@ -18,6 +18,8 @@
     "monospaceLinks": false,
     "default": {
       "outputSourceFiles": true
-    }
+    },
+    
+    "applicationName": "Sojourns"
   }
 }

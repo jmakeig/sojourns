@@ -16,7 +16,8 @@
 'use strict';
 
 var assert = require('assert.sjs');
-var ml = require("/lib/sojourns/QueryBuilder.sjs");
+var ml = require('/lib/sojourns/QueryBuilder');
+var buckets = require('/lib/sojourns/buckets');
 
 module.exports = {
   oneCategoryDefaults: function() {
@@ -39,7 +40,7 @@ module.exports = {
   justPaginated: function() {
     assert.equals(2500, Array.from(ml.page().values(cts.uriReference())).length);
   },
-  bucketsDate: function() {
+  bucketsString: function() {
     var values = Array.from(ml.collection("jeopardy").values('value', ['$3', '$6']));
     var xquery = [
       "for $range in", 
@@ -55,7 +56,7 @@ module.exports = {
     assert.equals(values[1].frequency, xqResult[1], 687);
     assert.equals(values[2].frequency, xqResult[2], 640);
   },
-  bucketCallBackInt: function() {
+  bucketsCallBackInt: function() {
     var values = Array.from(
     ml.collection('jeopardy')
       .values('show_number', function(min, max) {
@@ -80,5 +81,18 @@ module.exports = {
     var xqResult = xdmp.xqueryEval(xquery).toArray();
     
     assert.arraysEqual(xqResult, values.map(function(v) { return v.frequency; }));
+  },
+  bucketsDate: function() {
+    var values = Array.from(
+      ml.collection('jeopardy')
+        .page(5)
+        .values('air_date', function(min, max) {
+            return buckets.byMonth(min, max, 1);
+          }, 
+          {order: 'item', direction: 'descending', empties: true}
+        )
+    );
+    assert.equals(5, values.length);
+    assert.arraysEqual([13, 11, 11, 23, 9], values.map(function(v) { return v.frequency; }));
   }
 }

@@ -23,12 +23,12 @@ module.exports = {
   oneCategoryDefaults: function() {
     var facet = Array.from(ml.where().values("category"))[0];
     assert.equals(facet.item, "FICTIONAL CHARACTERS");
-    assert.equals(facet.frequency, 8);
+    assert.equals(8, facet.frequency);
   },
   allCategories: function() {
     assert.equals(
-      Array.from(      ml.where().values("category")).length,
-      Array.from(      cts.values(cts.jsonPropertyReference("category"))).length,
+      Array.from(ml.where().values("category")).length,
+      Array.from(cts.values(cts.jsonPropertyReference("category"))).length,
       xdmp.xqueryEval('count(cts:values(cts:json-property-reference("category")))').next().value.valueOf()
     );
   },
@@ -55,6 +55,29 @@ module.exports = {
     assert.equals(values[0].frequency, xqResult[0], 1132);
     assert.equals(values[1].frequency, xqResult[1], 687);
     assert.equals(values[2].frequency, xqResult[2], 640);
+  },
+  bucketsInt: function() {
+    var values = Array.from(
+      ml.collection('jeopardy')
+        .values('show_number', [24, 240, 2400])
+    );
+    assert.equals(4, values.length);
+
+    var xquery = [
+      '(cts:value-ranges(', 
+      '  cts:json-property-reference("show_number"), ', 
+      '  (24, 240, 2400), ', 
+      '  ("frequency-order", "descending")', 
+      '))[4]'
+    ].join('\n'); 
+    var xqueryResult = xdmp.xqueryEval(xquery).next().value;
+    // FIXME: Why can't I just do .valueOf() on the ValueIterator here?
+    var min = xqueryResult.xpath('./cts:minimum/data(.)', {cts: 'http://marklogic.com/cts'}).next().value;
+    var max = xqueryResult.xpath('./cts:maximum/data(.)', {cts: 'http://marklogic.com/cts'}).next().value;
+    assert.isType(values[3].item.minimum, 'number');
+    assert.isType(min, 'number');
+    assert.equals(64, min, values[3].item.minimum);
+    assert.equals(65, max, values[3].item.maximum);
   },
   bucketsCallBackInt: function() {
     var values = Array.from(
@@ -94,5 +117,36 @@ module.exports = {
     );
     assert.equals(5, values.length);
     assert.arraysEqual([13, 11, 11, 23, 9], values.map(function(v) { return v.frequency; }));
+    // https://bugtrack.marklogic.com/30967
+    assert.isType(values[0].item.minimum, Date);
+    assert.isType(values[0].item.maximum, Date);
+    // https://bugtrack.marklogic.com/30646
+    assert.isType(values[0].item['lower-bound'], Date);
+    assert.isType(values[0].item['upper-bound'], Date);
+    // {
+    //   "item": {
+    //     "minimum": "2012-01-02",
+    //     "maximum": "2012-01-23",
+    //     "lower-bound": "2012-01-01",
+    //     "upper-bound": "2012-02-01"
+    //   },
+    //   "frequency": 13
+    // }
+  },
+  tuples: function() {
+    var values = Array.from(
+      ml.collection('jeopardy')
+        .values(
+          ['category', 'show_number', 'air_date'] 
+        )
+    );
+    assert.equals(2445, values.length);
+    assert.isType(values[0].item[0], 'string');
+    assert.isType(values[0].item[1], 'number');
+    assert.isType(values[0].item[2], Date);
+
+    assert.equals('"S"CIENCE', values[0].item[0]);
+    assert.equals(4886, values[0].item[1]);
+    assert.equals((new Date("2005-12-05T00:00:00")).valueOf(), values[0].item[2].valueOf());
   }
 }

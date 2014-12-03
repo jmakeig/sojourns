@@ -41,7 +41,13 @@ function assertEquals(a, b) {
   }
 }
 
-function asertArraysEqual(a, b) {
+/**
+ * Test length and then test each item individually.
+ * @param {...Array} - Any number of arrays
+ * @return {undefined}
+ * @throws AssertionError
+ */
+function asertArraysEqual(/* ... */) {
   var arrays = Array.prototype.slice.call(arguments, 0);
   assertEquals.apply(this, arrays.map(function(a) { return a.length; }));
   
@@ -60,7 +66,25 @@ function assertNotNull(a) {
 }
 
 function assertIsType(a, type) {
-  return assert(a instanceof type, a + " is supposed to be of type " + Object.prototype.toString.call(type));
+  if(type instanceof Function) { // Constructor
+    return assert(a instanceof type, 
+      a + " is supposed to be of type " 
+        + Object.prototype.toString.call(type.prototype)
+        + " but it is actually "
+        + ((typeof a == 'object') 
+          ? Object.prototype.toString.call(Object.getPrototypeOf(a)) 
+          : typeof a)
+    );
+  } else {
+    assert((typeof a) === type, 
+      a + " is supposed to be of type " 
+        + type
+        + " but it is actually "
+        + ((typeof a == 'object') 
+          ? Object.prototype.toString.call(Object.getPrototypeOf(a)) 
+          : typeof a)
+    );
+  }
 }
 
 function assert(bool, msg) {

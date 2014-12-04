@@ -46,7 +46,8 @@ module.exports = {
       "for $range in", 
       "  cts:value-ranges(", 
       "    cts:json-property-reference('value'),", 
-      "    ('$3', '$6')", 
+      "    ('$3', '$6'),", 
+      "    ('frequency-order', 'descending')",
       "  )", 
       "return cts:frequency($range)" 
     ].join('\n');
@@ -117,12 +118,12 @@ module.exports = {
     );
     assert.equals(5, values.length);
     assert.arraysEqual([13, 11, 11, 23, 9], values.map(function(v) { return v.frequency; }));
-    // https://bugtrack.marklogic.com/30967
+    // https://bugtrack.marklogic.com/30967 - Won't fix. As designed. Handled specifically in code.
     assert.isType(values[0].item.minimum, Date);
     assert.isType(values[0].item.maximum, Date);
-    // https://bugtrack.marklogic.com/30646
-    assert.isType(values[0].item['lower-bound'], Date);
-    assert.isType(values[0].item['upper-bound'], Date);
+    // https://bugtrack.marklogic.com/30646 - Fixed
+    assert.isType(values[0].item.lowerBound, Date);
+    assert.isType(values[0].item.upperBound, Date);
     // {
     //   "item": {
     //     "minimum": "2012-01-02",

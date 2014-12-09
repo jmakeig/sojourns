@@ -23,7 +23,8 @@ module.exports = {
   valueEquals: assertValueEquals,
   arraysEqual: asertArraysEqual,
   notNull: assertNotNull,
-  isType: assertIsType
+  isType: assertIsType,
+  'throws': assertThrows
 }
 
 function AssertionError(msg) {
@@ -85,6 +86,17 @@ function assertIsType(a, type) {
           : typeof a)
     );
   }
+}
+
+function assertThrows(f, errorType) {
+  var caught = false;
+  try {
+    f.apply()
+  } catch(err) {
+    caught = true;
+    assertIsType(err, errorType);
+  }
+  assert(caught, "Expecting an error of type " + Object.prototype.toString.call(errorType.prototype));
 }
 
 function assert(bool, msg) {

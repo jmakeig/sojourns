@@ -162,5 +162,15 @@ module.exports = {
     assert.equals(469, values[0].frequency);
     assert.equals('ZOOLOGY', values[2148].item);
     assert.equals(1, values[2148].frequency);
+  },
+  unionConsistentTypes: function() {
+    assert.throws(function() {
+      var values = Array.from(
+        ml.collection('jeopardy')
+          .values(
+            ml.union(['category', 'air_date'])
+          )
+      );
+    }, Object); // Should be Error
   }
 }

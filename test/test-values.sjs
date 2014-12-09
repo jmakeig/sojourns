@@ -149,5 +149,18 @@ module.exports = {
     assert.equals('"S"CIENCE', values[0].item[0]);
     assert.equals(4886, values[0].item[1]);
     assert.equals((new Date("2005-12-05T00:00:00")).valueOf(), values[0].item[2].valueOf());
+  },
+  union: function() {
+    var values = Array.from(
+      ml.collection('jeopardy')
+        .values(
+          ml.union(['category', 'value'])
+        )
+    );
+    assert.equals(2149, values.length);
+    assert.equals('$400', values[0].item);
+    assert.equals(469, values[0].frequency);
+    assert.equals('ZOOLOGY', values[2148].item);
+    assert.equals(1, values[2148].frequency);
   }
 }

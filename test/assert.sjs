@@ -32,12 +32,10 @@ function AssertionError(msg) {
 }
 AssertionError.prototype = new Error;
 
-function assertEquals(a, b) {
-  //return assert(a === b, a + " should equal " + b);
+function assertEquals(should, does) {
   var args = Array.prototype.slice.call(arguments, 0);
-  if(args.length <= 1) return;
+  if(args.length <= 1) return true;
   for(var i = 1; i < args.length; i++) {
-    //xdmp.log(args[i] +", "+ args[i-1]);
     assert(args[i] === args[i-1], args[i] + " should equal " + args[i-1]);
   }
 }

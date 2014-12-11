@@ -21,10 +21,19 @@ var ml = require('/lib/sojourns/QueryBuilder.sjs');
 //xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
 
 module.exports = {
+  noCriteria: function() {
+    var results = Array.from(ml.search());
+    assert.equals(2500, results.length);
+  },
+  emptyCollection: function() {
+    var results = Array.from(ml.collection().search());
+    assert.equals(2500, results.length);
+  },
   estimate: function() {
-    // assert.isType(Array.from, Function);
+    assert.equals(ml.estimate(), 2500);
+  },
+  estimateCollection: function() {
     assert.equals(ml.collection("jeopardy").estimate(), 2500);
-    //assert.equals(Array.from(ml.collection("jeopardy").search()).length, 216930);
   },
   wordQuerySortByProperty: function() {
     var results = Array.from(

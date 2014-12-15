@@ -172,5 +172,22 @@ module.exports = {
           )
       );
     }, Object); // Should be Error
+  },
+  tuplesWithCollectionAndURIReferences: function() {
+    var values = 
+      cts.valueTuples([
+        cts.collectionReference(),
+        cts.uriReference(),
+        cts.jsonPropertyReference('value')
+      ], ['frequency-order', 'descending']);
+    var value = values.next().value.toObject();
+    var vs = Array.from(
+      ml
+        .collection('jeopardy')
+        .values([cts.collectionReference(), cts.uriReference(), 'value'])
+    );
+    for(var i = 0; i < value.length; i++) {
+      assert.equals(value[i], vs[0].item[i]);
+    }
   }
 }

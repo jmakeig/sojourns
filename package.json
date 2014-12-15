@@ -21,8 +21,7 @@
   },
   "homepage": "https://github.com/jmakeig/sojourns",
   "devDependencies": {
-    "docco": "^0.6.3",
-    "gulp": "^3.8.10",
+    "docdown": "git://github.com/jdalton/docdown.git#js",
     "jaguarjs-jsdoc": "0.0.1",
     "jsdoc": "^3.3.0-alpha10"
   }

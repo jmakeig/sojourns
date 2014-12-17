@@ -189,5 +189,13 @@ module.exports = {
     for(var i = 0; i < value.length; i++) {
       assert.equals(value[i], vs[0].item[i]);
     }
+  },
+  coOccurrenceMap: function() {
+    var vs = ml
+        .collection('jeopardy')
+        .values(['value', 'category'], null, {map: true}).next().value;
+    //assert.equals(21, vs['$2,000'].length);
+    assert.equals(21, vs['$2,000'].count); // FIXME: https://bugtrack.marklogic.com/31278
+    assert.equals(38, Object.keys(vs).length);
   }
 }

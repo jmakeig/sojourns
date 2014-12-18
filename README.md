@@ -15,7 +15,10 @@ Experimental sandbox for MarkLogic Server-Side JavaScript API.
 ```javascript
 var ml = require('/lib/sojourns/QueryBuilder');
 var results = 
+  // No need to ever explicitly create an instance of a
+  // QueryBuilder. The chaining interface handles that.
   ml.collection('jeopardy')
+    // Filter the results by any cts.query
     .where(
       cts.andQuery([
         'america', 
@@ -24,6 +27,8 @@ var results =
     )
     .orderBy({property: 'value', direction: 'descending'})
     .page(2, 4)
+    // search() (and values()) produce an ES6 iterator. 
+    // use a for…of loop to iterate over the results lazily.
     .search();
 for(var result of results) {
   // …
@@ -67,6 +72,10 @@ ml.collection('jeopardy')
 ```javascript
 ml.values(
   'value',
+  // Ranges of values.
+  // Two division will create three buckets
+  // with negative and positive “infinity” on
+  // either end.
   ['$3', '$6'] 
 );
 ```
@@ -106,14 +115,32 @@ ml.values(
 var ml = require('/lib/sojourns/QueryBuilder');
 Array.from(
 ml
-  .where(cts.orQuery(
-    Array.from(ml.values('category', 'M')).map(function(v) { return cts.jsonPropertyValueQuery('category', v.item);})
-  ))
+  .where(
+    cts.orQuery(
+      Array.from(
+        // Get all of the category values, starting with 'M'
+        // This is an artificial, yet illustrative example of a 
+        // running a nested query to build a query
+        ml.values('category', 'M')) 
+          // For each 'category' value, crate a property-value query
+          .map(function(v) { 
+            return cts.jsonPropertyValueQuery('category', v.item);
+          })
+      )
+  )
+  // Get just the first 15 values
   .page(15)
+  // Bucket the 'air_date' values by a custom function 
+  // that generates an array of month boundaries 
+  // The callback supplies the mix and max values of all
+  // of the values scoped to the query in order to scale 
+  // the results.
   .values("air_date", function(min, max) {
     return ml.buckets.byMonth(min, max, 1);
   }, {order: "item", direction: "descending"})
 ).map(
+  // Loop through each bucket and produce an ASCII histogram 
+  // based on the aggregate frequency within the bucket.
   function(facet) {
     return facet.item.lowerBound.toDateString() + " - " 
       + facet.item.upperBound.toDateString()   + " " 

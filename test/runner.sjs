@@ -18,7 +18,7 @@
 // Usage:
 // clear; curl -fsS --digest --user admin:'********' http://localhost:8765/test/runner.sjs | jq .
 
-require("/lib/sojourns/util");
+var util = require("/lib/sojourns/util");
 
 xdmp.setResponseContentType("application/json");
 
@@ -40,9 +40,7 @@ function tx(f, database, modules, root) {
     { 
       "database": xdmp.database(database), 
       "transactionMode": "update-auto-commit", 
-      "isolation": "different-transaction" //, 
-      //"modules": modules,
-      //"root": root,
+      "isolation": "different-transaction"
     }
   );
 }
@@ -86,7 +84,6 @@ function run() {
           code: e.code, 
           retryable: e.retryable
         }
-        //throw e;
       }
       results.push(result);
     }
@@ -103,6 +100,7 @@ function run() {
 function tearDown() {}
 
 tx(setUp, "Documents");
-var output = Array.from(tx(run, "Documents"))[0]; // FIXME: There's something odd going on with the .filter() above. Need to double wrap arrays and then unwrap.
+//var output = util.arrayFrom(tx(run, "Documents"))[0]; // FIXME: There's something odd going on with the .filter() above. Need to double wrap arrays and then unwrap.
+var output = tx(run, 'Documents');
 tx(tearDown, "Documents");
 output;

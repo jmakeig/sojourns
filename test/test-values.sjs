@@ -16,32 +16,33 @@
 'use strict';
 
 var assert = require('assert.sjs');
+var util = require('/lib/sojourns/util');
 var ml = require('/lib/sojourns/QueryBuilder');
 var buckets = require('/lib/sojourns/buckets');
 
 module.exports = {
   oneCategoryDefaults: function() {
-    var facet = Array.from(ml.where().values("category"))[0];
+    var facet = util.arrayFrom(ml.where().values("category"))[0];
     assert.equals(facet.item, "FICTIONAL CHARACTERS");
     assert.equals(8, facet.frequency);
   },
   allCategories: function() {
     assert.equals(
-      Array.from(ml.where().values("category")).length,
-      Array.from(cts.values(cts.jsonPropertyReference("category"))).length,
+      util.arrayFrom(ml.where().values("category")).length,
+      util.arrayFrom(cts.values(cts.jsonPropertyReference("category"))).length,
       xdmp.xqueryEval('count(cts:values(cts:json-property-reference("category")))').next().value.valueOf()
     );
   },
   specialLexicons: function() {
-    assert.equals(2500, Array.from(ml.where().values(cts.uriReference())).length);
-    assert.equals(1, Array.from(ml.where().values(cts.collectionReference())).length);
+    assert.equals(2500, util.arrayFrom(ml.where().values(cts.uriReference())).length);
+    assert.equals(1, util.arrayFrom(ml.where().values(cts.collectionReference())).length);
     assert.equals("jeopardy", ml.where().values(cts.collectionReference()).next().value.item);
   },
   justPaginated: function() {
-    assert.equals(2500, Array.from(ml.page().values(cts.uriReference())).length);
+    assert.equals(2500, util.arrayFrom(ml.page().values(cts.uriReference())).length);
   },
   bucketsString: function() {
-    var values = Array.from(ml.collection("jeopardy").values('value', ['$3', '$6']));
+    var values = util.arrayFrom(ml.collection("jeopardy").values('value', ['$3', '$6']));
     var xquery = [
       "for $range in", 
       "  cts:value-ranges(", 
@@ -58,7 +59,7 @@ module.exports = {
     assert.equals(values[2].frequency, xqResult[2], 640);
   },
   bucketsInt: function() {
-    var values = Array.from(
+    var values = util.arrayFrom(
       ml.collection('jeopardy')
         .values('show_number', [24, 240, 2400])
     );
@@ -81,7 +82,7 @@ module.exports = {
     assert.equals(65, max, values[3].item.maximum);
   },
   bucketsCallBackInt: function() {
-    var values = Array.from(
+    var values = util.arrayFrom(
     ml.collection('jeopardy')
       .values('show_number', function(min, max) {
         assert.equals(5, min);
@@ -107,7 +108,7 @@ module.exports = {
     assert.arraysEqual(xqResult, values.map(function(v) { return v.frequency; }));
   },
   bucketsDate: function() {
-    var values = Array.from(
+    var values = util.arrayFrom(
       ml.collection('jeopardy')
         .page(5)
         .values('air_date', function(min, max) {
@@ -135,7 +136,7 @@ module.exports = {
     // }
   },
   tuples: function() {
-    var values = Array.from(
+    var values = util.arrayFrom(
       ml.collection('jeopardy')
         .values(
           ['category', 'show_number', 'air_date'] 
@@ -151,7 +152,7 @@ module.exports = {
     assert.equals((new Date("2005-12-05T00:00:00")).valueOf(), values[0].item[2].valueOf());
   },
   union: function() {
-    var values = Array.from(
+    var values = util.arrayFrom(
       ml.collection('jeopardy')
         .values(
           ml.union(['category', 'value'])
@@ -165,7 +166,7 @@ module.exports = {
   },
   unionConsistentTypes: function() {
     assert.throws(function() {
-      var values = Array.from(
+      var values = util.arrayFrom(
         ml.collection('jeopardy')
           .values(
             ml.union(['category', 'air_date'])
@@ -181,7 +182,7 @@ module.exports = {
         cts.jsonPropertyReference('value')
       ], ['frequency-order', 'descending']);
     var value = values.next().value.toObject();
-    var vs = Array.from(
+    var vs = util.arrayFrom(
       ml
         .collection('jeopardy')
         .values([cts.collectionReference(), cts.uriReference(), 'value'])

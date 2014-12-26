@@ -15,18 +15,19 @@
  */
 'use strict';
 
-var assert = require('assert.sjs');
-var ml = require('/lib/sojourns/QueryBuilder.sjs');
+var assert = require('assert');
+var util = require('/lib/sojourns/util');
+var ml = require('/lib/sojourns/QueryBuilder');
 
 //xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
 
 module.exports = {
   noCriteria: function() {
-    var results = Array.from(ml.search());
+    var results = util.arrayFrom(ml.search());
     assert.equals(2500, results.length);
   },
   emptyCollection: function() {
-    var results = Array.from(ml.collection().search());
+    var results = util.arrayFrom(ml.collection().search());
     assert.equals(2500, results.length);
   },
   estimate: function() {
@@ -36,7 +37,7 @@ module.exports = {
     assert.equals(ml.collection("jeopardy").estimate(), 2500);
   },
   wordQuerySortByProperty: function() {
-    var results = Array.from(
+    var results = util.arrayFrom(
       ml.collection("jeopardy")
         .where(cts.andQuery(["america"]))
         .orderBy({property: "show_number", direction: "ascending"})
@@ -49,8 +50,8 @@ module.exports = {
     );
   },
   justPaginated: function() {
-    assert.equals(2500, Array.from(ml.page().search()).length);
-    assert.equals(50, Array.from(ml.page(50).search()).length);
-    assert.equals(10, Array.from(ml.page(10, 100).search()).length);
+    assert.equals(2500, util.arrayFrom(ml.page().search()).length);
+    assert.equals(50, util.arrayFrom(ml.page(50).search()).length);
+    assert.equals(10, util.arrayFrom(ml.page(10, 100).search()).length);
   }
 }

@@ -25,9 +25,10 @@ xdmp.setResponseContentType("application/json");
 //xdmp.log(xdmp.requestStatus(xdmp.host(), xdmp.server(), xdmp.request()));
 
 var suite = [
-  "test-readme.sjs",
-  "test-search.sjs",
-  "test-values.sjs"
+  "test-buckets.sjs" //,
+  //"test-readme.sjs",
+  //"test-search.sjs",
+  //"test-values.sjs"
 ]
 
 var DEBUG = false;

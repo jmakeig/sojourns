@@ -15,15 +15,18 @@
  */
 'use strict';
 
-require('/lib/sojourns/util');
+var util = require('/lib/sojourns/util');
 
 module.exports = {
   AssertionError: AssertionError,
+  isTrue: assertBoolean,
   equals: assertEquals,
   valueEquals: assertValueEquals,
   arraysEqual: asertArraysEqual,
   notNull: assertNotNull,
   isType: assertIsType,
+  before: assertBefore,
+  after: assertAfter, 
   'throws': assertThrows
 }
 
@@ -86,6 +89,16 @@ function assertIsType(a, type) {
   }
 }
 
+function assertBefore(a, b, orEqual) {
+  if(orEqual) { assert(a <= b, a + ' is supposed to come before (or equal to) ' + b); }
+  else { assert(a < b, a + ' is supposed to come before ' + b); }
+}
+
+function assertAfter(a, b, orEqual) {
+  if(orEqual) { assert(a >= b, a + ' is supposed to come after (or equal to) ' + b); }
+  else { assert(a > b, a + ' is supposed to come after ' + b); }
+}
+
 function assertThrows(f, errorType) {
   var caught = false;
   try {
@@ -95,6 +108,10 @@ function assertThrows(f, errorType) {
     assertIsType(err, errorType);
   }
   assert(caught, "Expecting an error of type " + Object.prototype.toString.call(errorType.prototype));
+}
+
+function assertBoolean(bool) {
+  assert(bool, 'Nope');
 }
 
 function assert(bool, msg) {

@@ -113,11 +113,11 @@ ml.values(
 #### Calculated
 ```javascript
 var ml = require('/lib/sojourns/QueryBuilder');
-Array.from(
+util.arrayFrom(
 ml
   .where(
     cts.orQuery(
-      Array.from(
+      util.arrayFrom(
         // Get all of the category values, starting with 'M'
         // This is an artificial, yet illustrative example of a 
         // running a nested query to build a query

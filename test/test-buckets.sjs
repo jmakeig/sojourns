@@ -21,14 +21,22 @@ var buckets = require('/lib/sojourns/buckets.sjs');
 
 module.exports = {
   testDateValues: function() {
-    var d = xs.dateTime('1984-09-14T00:00:00');
+    var d = xs.date('1984-09-14');
     //assert.isType(d, Value);
     assert.isTrue(d instanceof Value);
     //assert.isTrue(d.toObject(), Date);
     assert.isTrue(d.toObject() instanceof Date);
+    assert.valueEquals(new Date(1984, 9-1, 14), d.toObject());
+  },
+  testDateTimeValues: function() {
+    var d = xs.dateTime('1984-09-14T01:02:03');
+    //assert.isType(d, Value);
+    assert.isTrue(d instanceof Value);
+    //assert.isTrue(d.toObject(), Date);
+    assert.isTrue(d.toObject() instanceof Date);
+    assert.valueEquals(new Date(1984, 9-1, 14, 1, 2, 3), d.toObject());
   },
   testMonthsStart: function() {
-    //fn.adjustDateTimeToTimezone(xs.dateTime(str), '-PT0H')
     var s = xs.date('1984-09-14');
     var e = xs.date('1985-12-07');
     var b = buckets.byMonth(s, e, 1);

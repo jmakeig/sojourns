@@ -28,7 +28,7 @@ var suite = [
   "test-buckets.sjs",
   "test-readme.sjs",
   "test-search.sjs",
-  //"test-values.sjs"
+  "test-values.sjs"
 ]
 
 var DEBUG = false;
@@ -80,10 +80,10 @@ function run() {
         result.error = {
           name: e.name, 
           message: e.message, 
-          stack: e.stack.split(/\n/), 
+          stack: e.stack.split(/\n/), // FIXME: This isn't being updated each iteration
           code: e.code, 
           retryable: e.retryable
-        }
+        };
       }
       results.push(result);
     }

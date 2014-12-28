@@ -27,10 +27,14 @@ module.exports = {
   isType: assertIsType,
   before: assertBefore,
   after: assertAfter, 
+  within: assertWithin,
   'throws': assertThrows
 }
 
 function AssertionError(msg) {
+  // <http://dailyjs.com/2014/01/30/exception-error/>
+  Error.call(this);
+  Error.captureStackTrace(this, AssertionError);
   this.message = msg;
 }
 AssertionError.prototype = new Error;
@@ -58,8 +62,12 @@ function asertArraysEqual(/* ... */) {
   }
 }
 
-function assertValueEquals(a, b) {
-  return assert(a.valueOf() === b.valueOf(), a + ".valueOf() should equal " + b + ".valueOf()");
+function assertValueEquals(should, does) {
+  var args = Array.prototype.slice.call(arguments, 0);
+  if(args.length <= 1) return true;
+  for(var i = 1; i < args.length; i++) {
+    assert(args[i].valueOf() === args[i-1].valueOf(), args[i].valueOf() + " should equal " + args[i-1].valueOf());
+  }
 }
 
 
@@ -99,19 +107,32 @@ function assertAfter(a, b, orEqual) {
   else { assert(a > b, a + ' is supposed to come after ' + b); }
 }
 
-function assertThrows(f, errorType) {
+function assertThrows(f, errorType, name) {
   var caught = false;
   try {
     f.apply()
   } catch(err) {
     caught = true;
-    assertIsType(err, errorType);
+    if(errorType) {
+      assertIsType(err, errorType);
+    }
+    if(name) {
+      assertEquals(name, err.name);
+    }
   }
-  assert(caught, "Expecting an error of type " + Object.prototype.toString.call(errorType.prototype));
+  var msg = 'Expecting to catch an error';
+  if(errorType) {
+    msg = 'Expecting an error of type ' + Object.prototype.toString.call(errorType.prototype);
+  }
+  assert(caught, msg);
 }
 
 function assertBoolean(bool) {
   assert(bool, 'Nope');
+}
+
+function assertWithin(a, b, epsilon) {
+  assert(Math.abs(a - b) <= epsilon, a + ' and ' + b + ' are not within ' + epsilon);
 }
 
 function assert(bool, msg) {

@@ -28,14 +28,16 @@ module.exports = {
     assert.isTrue(d.toObject() instanceof Date);
   },
   testMonthsStart: function() {
-    var s = xs.dateTime('1984-09-14T00:00:00');
-    var e = xs.dateTime('1985-12-07T00:00:00');
+    //fn.adjustDateTimeToTimezone(xs.dateTime(str), '-PT0H')
+    var s = xs.date('1984-09-14');
+    var e = xs.date('1985-12-07');
     var b = buckets.byMonth(s, e, 1);
     assert.equals(17, b.length);
     assert.before(b[0], s.toObject());
     assert.after(b[b.length - 1], e.toObject());
-  }
-,
+    assert.valueEquals(b[0], new Date(1984, 9-1, 1));
+    assert.valueEquals(b[b.length - 1], new Date(1986, 1-1, 1));
+  },
   testMonthsAfterStart: function() {
     var s = xs.dateTime('1984-09-14T00:00:00');
     var e = xs.dateTime('1985-12-07T00:00:00');
